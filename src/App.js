@@ -6,7 +6,10 @@ import Table from './component/Table';
 function App() {
   return (
     <AppProvider>
-      <Table />
+      <main className="container">
+        <Table />
+      </main>
+
     </AppProvider>
   );
 }

@@ -2,18 +2,49 @@ import React, { useContext } from 'react';
 import AppContext from '../context/AppContext';
 
 export default function Table() {
-  const { planetList, isLoading } = useContext(AppContext);
-  console.log(planetList);
-  return (
-    <>
-      {isLoading && (
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
+  const { filters, filteredPlanetList, isLoading, setFilters } = useContext(AppContext);
 
+  const handleChange = ({ target }) => {
+    setFilters((prevState) => ({
+      ...prevState,
+      filterByName: target.value,
+    }));
+  };
+
+  const formatDate = (param) => {
+    const monthNumber = 10;
+    const date = new Date(param);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1) < monthNumber
+      ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+    const day = date.getDate();
+    return `${month}/${day}/${year}`;
+  };
+
+  return (
+
+    <section className="row mt-4">
+      <div className="input-group mb-3">
+        <span className="input-group-text">
+          <i className="fa-solid fa-magnifying-glass" />
+        </span>
+        <input
+          type="text"
+          name="planetName"
+          placeholder="Search planet by name"
+          className="form-control"
+          value={ filters.filterByName.name }
+          onChange={ handleChange }
+          data-testid="name-filter"
+        />
+      </div>
+      {isLoading && (
+        <div className="spinner-border text-primary" role="status" />
       )}
-      <table className="table table-sm table-striped">
-        <thead>
+
+      <table className="table table-sm table-hover caption-top">
+        <caption>StarWars Planets</caption>
+        <thead className="table-secondary">
           <tr>
             <th scope="col">Name</th>
             <th scope="col">Rotation Period</th>
@@ -30,8 +61,8 @@ export default function Table() {
             <th scope="col">URL</th>
           </tr>
         </thead>
-        <tbody>
-          {planetList.map((planet, index) => (
+        <tbody className="table-group-divider">
+          {filteredPlanetList.map((planet, index) => (
             <tr key={ index }>
               <td>{planet.name}</td>
               <td>{planet.rotation_period}</td>
@@ -42,13 +73,18 @@ export default function Table() {
               <td>{planet.terrain}</td>
               <td>{planet.surface_water}</td>
               <td>{planet.population}</td>
-              <td>{planet.films}</td>
-              <td>{planet.created}</td>
-              <td>{planet.edited}</td>
-              <td>{planet.url}</td>
+              {/* <td>
+                {planet.films.map((film) => (
+                  <p key={ film }>{film}</p>
+                ))}
+              </td> */}
+              <td>{planet.films.length}</td>
+              <td>{formatDate(planet.created)}</td>
+              <td>{formatDate(planet.edited)}</td>
+              <td><a href={ planet.url } target="_blank" rel="noreferrer">Link</a></td>
             </tr>))}
         </tbody>
       </table>
-    </>
+    </section>
   );
 }

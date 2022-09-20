@@ -4,7 +4,12 @@ import AppContext from './AppContext';
 
 export default function AppProvider({ children }) {
   const [planetList, setPlanetList] = useState([]);
+
   const [isLoading, setIsLoading] = useState(false);
+
+  const [filters, setFilters] = useState({
+    filterByName: '',
+  });
 
   useEffect(() => {
     setIsLoading(true);
@@ -39,9 +44,15 @@ export default function AppProvider({ children }) {
     getPlanetList();
   }, []);
 
+  const filteredPlanetList = planetList
+    .filter(({ name }) => name.includes(filters.filterByName));
+
   const contextValue = {
     planetList,
     isLoading,
+    filters,
+    setFilters,
+    filteredPlanetList,
   };
 
   return (
