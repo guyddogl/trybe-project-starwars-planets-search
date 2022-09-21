@@ -8,6 +8,7 @@ export default function Table() {
     setFilterButton,
     filterButton,
     filterColumn,
+    setFilterColumn,
     filterByNumericValues,
     setFilterByNumericValues,
   } = useContext(AppContext);
@@ -36,8 +37,12 @@ export default function Table() {
     setFilterButton(!filterButton);
   };
 
+  const updateColumnOptions = () => setFilterColumn(filterColumn
+    .filter((column) => column !== selectControl.column));
+
   const handleFilter = () => {
     handleFilterByNumericValues();
+    updateColumnOptions();
   };
 
   return (
