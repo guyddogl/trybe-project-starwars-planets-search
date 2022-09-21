@@ -15,12 +15,14 @@ export default function AppProvider({ children }) {
 
   const [filterButton, setFilterButton] = useState(false);
 
-  const [filterColumn, setFilterColumn] = useState([
+  const INITIAL_FILTER_COLUMN = [
     'population',
     'orbital_period',
     'diameter',
     'rotation_period',
-    'surface_water']);
+    'surface_water'];
+
+  const [filterColumn, setFilterColumn] = useState(INITIAL_FILTER_COLUMN);
 
   useEffect(() => {
     setIsLoading(true);
@@ -45,26 +47,31 @@ export default function AppProvider({ children }) {
   const verifyFilterComparison = (planet, column, comparison, value) => {
     switch (comparison) {
     case 'maior que':
-      return Number(planet[column]) > Number(value) && planet[column] !== 'unknown';
+      return Number(planet[column]) > Number(value);
     case 'menor que':
       return Number(planet[column]) < Number(value);
     case 'igual a':
-      return Number(planet[column]) === Number(value) && planet[column] !== 'unknown';
+      return Number(planet[column]) === Number(value);
     default: return planet;
     }
   };
 
   useEffect(() => {
+    console.log(filterByNumericValues);
+    let filterPlanet = planetsList;
     if (filterByNumericValues.length > 0) {
       filterByNumericValues.forEach((filter) => {
         const { column, comparison, value } = filter;
-        const filteredPlanetList = filterPlanets
+        const filteredPlanetList = filterPlanet
           .filter((planet) => (
             verifyFilterComparison(planet, column, comparison, value)
           ));
-        setFilterPlanets(filteredPlanetList);
+        console.log(planetsList, 'api');
+        console.log(filteredPlanetList, 'filtrado');
+        filterPlanet = filteredPlanetList;
       });
     }
+    setFilterPlanets(filterPlanet);
   }, [filterButton]); // eslint-disable-line
 
   const filteredPlanetList = filterPlanets
@@ -83,6 +90,7 @@ export default function AppProvider({ children }) {
     setFilterButton,
     filterColumn,
     setFilterColumn,
+    INITIAL_FILTER_COLUMN,
   };
 
   return (

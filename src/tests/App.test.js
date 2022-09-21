@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import userEvent from "@testing-library/user-event";
 import App from '../App';
 import testData from './testData';
 
@@ -32,18 +33,18 @@ describe('Testa o comportamento inicial do App', () => {
     expect(planet).toBeInTheDocument();
     expect(global.fetch).toHaveBeenCalled();
     expect(global.fetch).toHaveBeenCalledWith(endpoint);
-  })
+  });
 
-  test('Verifica se a tabela é exibida', () => {
+  test('Verifica se a tabela é exibida', async () => {
     render(<App />);
 
-    const table = screen.getByRole('table');
+    const table = await screen.findByRole('table');
 
     expect(table).toBeInTheDocument();
-  })
+  });
 
   test('Verifica as opções de filtros', () => {
-    render(<App />)
+    render(<App />);
 
     const input = screen.getByTestId(INPUT_FILTER_NAME);
     const column = screen.getByTestId(COLUMN_FILTER);
@@ -56,5 +57,59 @@ describe('Testa o comportamento inicial do App', () => {
     expect(comparison).toBeInTheDocument();
     expect(value).toBeInTheDocument();
     expect(button).toBeInTheDocument();
-  })
-})
+  });
+
+  test('Verifica se é possível filtrar pelo nome', async () => {
+    global.fetch = jest.fn(async () => ({
+      json: async () => testData,
+    }));
+
+    render(<App />);
+
+    const input = screen.getByTestId(INPUT_FILTER_NAME);
+
+    userEvent.type(input, 'Tat');
+
+    const planet = await screen.findByText(/Tatooine/i);
+
+    expect(planet).toBeInTheDocument();
+  });
+
+  test('Verifica se o botão filter funciona', async () => {
+    global.fetch = jest.fn(async () => ({
+      json: async () => testData,
+    }));
+
+    render(<App />);
+
+    const value = screen.getByTestId(VALUE_FILTER);
+
+    userEvent.type(value, '1000');
+
+    const button = screen.getByTestId(BUTTON_FILTER);
+
+    userEvent.click(button);
+
+    const planet = await screen.findByText(/Yavin/i);
+
+    expect(planet).not.toBeInTheDocument();
+  });
+
+  test('Verifica se o select comparison funciona', async () => {
+    global.fetch = jest.fn(async () => ({
+      json: async () => testData,
+    }));
+
+    render(<App />);
+
+    const comparison = screen.getByTestId("comparison-filter");
+
+    userEvent.selectOptions(comparison, "menor que");
+
+    const button = screen.getByTestId(BUTTON_FILTER);
+
+    userEvent.click(button);
+
+    expect(screen.getByText(/menor que/i).selected).toBe(true);
+  });
+});

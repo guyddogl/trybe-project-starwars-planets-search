@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import AppContext from '../context/AppContext';
 
 export default function Table() {
@@ -40,14 +40,26 @@ export default function Table() {
   const updateColumnOptions = () => setFilterColumn(filterColumn
     .filter((column) => column !== selectControl.column));
 
+  const removeFilter = (column) => {
+    setFilterColumn((prevState) => [...prevState, column]);
+    setFilterByNumericValues(filterByNumericValues.filter((e) => e.column !== column));
+    setFilterButton(!filterButton);
+  };
+
+  const removeAllFilter = () => {
+    setFilterByNumericValues([]);
+    setFilterButton(!filterButton);
+  };
+
+  useEffect(() => setSelectControl({
+    column: filterColumn[0],
+    comparison: 'maior que',
+    value: 0,
+  }), [filterButton, filterColumn]);
+
   const handleFilter = () => {
     updateColumnOptions();
     handleFilterByNumericValues();
-    setSelectControl({
-      column: filterColumn[0],
-      comparison: 'maior que',
-      value: 0,
-    });
   };
 
   return (
@@ -121,10 +133,14 @@ export default function Table() {
         </li>
         {filterByNumericValues.map((activeFilter) => (
           <li key={ activeFilter.column } className="list-group-item my-2">
-            <div className="row align-items-center">
+            <div className="row align-items-center" data-testid="filter">
               <div className="col-1" style={ { maxWidth: '50px' } }>
-                <button type="button" className="btn btn-sm btn-danger">
-                  <i className="fa-regular fa-trash-can" />
+                <button
+                  type="button"
+                  className="btn btn-sm btn-danger"
+                  onClick={ () => removeFilter(activeFilter.column) }
+                >
+                  <i className="fa-solid fa-xmark" />
                 </button>
               </div>
               <div className="col-4">
@@ -136,6 +152,23 @@ export default function Table() {
               </div>
             </div>
           </li>))}
+        <li className="list-group-item" aria-current="true">
+          {filterByNumericValues.length > 0 && (
+            <div className="row align-items-center" data-testid="filter">
+              <div className="col-3 text-center mt-2">
+                <button
+                  type="button"
+                  className="btn btn-sm btn-danger"
+                  onClick={ removeAllFilter }
+                  data-testid="button-remove-filters"
+                >
+                  <i className="fa-solid fa-trash me-2" />
+                  Remove All Filters
+                </button>
+              </div>
+            </div>
+          )}
+        </li>
       </ul>
     </>
   );
