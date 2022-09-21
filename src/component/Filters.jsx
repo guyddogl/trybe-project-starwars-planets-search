@@ -69,7 +69,6 @@ export default function Table() {
 
   const handleOrder = () => {
     if (selectOrderControl.order === 'population') {
-      console.log('entrei IF 1');
       const knownPopulation = planetsList
         .filter((planet) => planet.population !== 'unknown');
       const unknownPopulation = planetsList
