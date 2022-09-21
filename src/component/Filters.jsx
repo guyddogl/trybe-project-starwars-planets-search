@@ -2,17 +2,9 @@ import React, { useContext, useState, useEffect } from 'react';
 import AppContext from '../context/AppContext';
 
 export default function Table() {
-  const {
-    filterByName,
-    setFilterByName,
-    setFilterButton,
-    filterButton,
-    filterColumn,
-    setFilterColumn,
-    filterByNumericValues,
-    setFilterByNumericValues,
-    planetsList,
-  } = useContext(AppContext);
+  const { filterByName, setFilterByName, setFilterButton, filterButton,
+    filterColumn, setFilterColumn, filterByNumericValues, setFilterByNumericValues,
+    planetsList, setFilterPlanets } = useContext(AppContext);
 
   const [selectOrderControl, setSelectOrderControl] = useState({
     order: 'population',
@@ -35,7 +27,6 @@ export default function Table() {
   });
 
   const handleSelectControl = ({ target }) => {
-    console.log('teste');
     setSelectControl((prevState) => ({
       ...prevState,
       [target.name]: target.value,
@@ -77,18 +68,28 @@ export default function Table() {
   };
 
   const handleOrder = () => {
-    console.log('order');
     if (selectOrderControl.order === 'population') {
+      console.log('entrei IF 1');
       const knownPopulation = planetsList
         .filter((planet) => planet.population !== 'unknown');
-      // const unknownPopulation = planetsList
-      //   .filter((planet) => planet.population === 'unknown');
+      const unknownPopulation = planetsList
+        .filter((planet) => planet.population === 'unknown');
+      const { order } = selectOrderControl;
       if (selectOrderControl.radio === 'ASC') {
-        const { order } = selectOrderControl;
-        console.log(knownPopulation.sort((a, b) => a[order] - b[order]));
-      } else {
-        console.log(knownPopulation.sort((a, b) => b[order] - a[order]));
+        return setFilterPlanets([
+          ...knownPopulation.sort((a, b) => a[order] - b[order]),
+          ...unknownPopulation]);
       }
+      return setFilterPlanets([
+        ...knownPopulation.sort((a, b) => b[order] - a[order]),
+        ...unknownPopulation]);
+    }
+    const { order } = selectOrderControl;
+    setFilterPlanets([]);
+    if (selectOrderControl.radio === 'ASC') {
+      setFilterPlanets([...planetsList.sort((a, b) => a[order] - b[order])]);
+    } else {
+      setFilterPlanets([...planetsList.sort((a, b) => b[order] - a[order])]);
     }
   };
 
@@ -97,7 +98,6 @@ export default function Table() {
 
   const comparisonOptions = ['maior que', 'menor que', 'igual a'];
 
-  console.log(selectControl);
   return (
     <>
       <div className="input-group mb-3">

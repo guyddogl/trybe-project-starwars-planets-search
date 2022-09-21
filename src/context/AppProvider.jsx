@@ -92,6 +92,7 @@ export default function AppProvider({ children }) {
     INITIAL_FILTER_COLUMN,
     orderButton,
     setOrderButton,
+    setFilterPlanets,
   };
 
   return (
