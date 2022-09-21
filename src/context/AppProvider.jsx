@@ -6,7 +6,6 @@ export default function AppProvider({ children }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const [planetsList, setPlanetsList] = useState([]);
-  console.log(planetsList);
 
   const [filterPlanets, setFilterPlanets] = useState([]);
 
@@ -15,6 +14,13 @@ export default function AppProvider({ children }) {
   const [filterByNumericValues, setFilterByNumericValues] = useState([]);
 
   const [filterButton, setFilterButton] = useState(false);
+
+  const [filterColumn, setFilterColumn] = useState([
+    'population',
+    'orbital_period',
+    'diameter',
+    'rotation_period',
+    'surface_water']);
 
   useEffect(() => {
     setIsLoading(true);
@@ -50,29 +56,16 @@ export default function AppProvider({ children }) {
 
   useEffect(() => {
     if (filterByNumericValues.length > 0) {
-      // console.log(filterByNumericValues[0]);
-      const { column, comparison, value } = filterByNumericValues[0];
-      console.log(column, comparison, value);
-      const filteredPlanetList = filterPlanets
-        .filter((planet) => (
-          verifyFilterComparison(planet, column, comparison, value)
-        ));
-      setFilterPlanets(filteredPlanetList);
+      filterByNumericValues.forEach((filter) => {
+        const { column, comparison, value } = filter;
+        const filteredPlanetList = filterPlanets
+          .filter((planet) => (
+            verifyFilterComparison(planet, column, comparison, value)
+          ));
+        setFilterPlanets(filteredPlanetList);
+      });
     }
   }, [filterButton]); // eslint-disable-line
-
-  // useEffect(() => {
-  //   if (filterByNumericValues.length > 0) {
-  //     // console.log(filterByNumericValues[0]);
-  //     const { column, value } = filterByNumericValues[0];
-  //     console.log(column, value);
-  //     const filteredPlanetList = filterPlanets
-  //       .filter((planet) => (
-  //         Number(planet[column]) > Number(value)
-  //       ));
-  //     setFilterPlanets(filteredPlanetList);
-  //   }
-  // }, [filterButton]); // eslint-disable-line
 
   const filteredPlanetList = filterPlanets
     .filter((planet) => planet.name.toLowerCase()
@@ -80,6 +73,7 @@ export default function AppProvider({ children }) {
 
   const contextValue = {
     isLoading,
+    planetsList,
     filterPlanets,
     setFilterByName,
     filterByNumericValues,
@@ -87,6 +81,8 @@ export default function AppProvider({ children }) {
     filteredPlanetList,
     filterButton,
     setFilterButton,
+    filterColumn,
+    setFilterColumn,
   };
 
   return (

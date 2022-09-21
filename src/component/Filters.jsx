@@ -7,9 +7,8 @@ export default function Table() {
     setFilterByName,
     setFilterButton,
     filterButton,
-    // planetList,
-    // setPlanetList,
-    // filterByNumericValues,
+    filterColumn,
+    filterByNumericValues,
     setFilterByNumericValues,
   } = useContext(AppContext);
 
@@ -39,14 +38,6 @@ export default function Table() {
 
   const handleFilter = () => {
     handleFilterByNumericValues();
-    // console.log(filterByNumericValues[0].column);
-    // const teste = filterByNumericValues[0].column;
-    // const newFilter = planetList.planets
-    //   .filter((planet) => planet[teste] === '12500');
-    // setPlanetList((prevState) => ({
-    //   ...prevState,
-    //   filteredPlanets: newFilter,
-    // }));
   };
 
   return (
@@ -75,11 +66,9 @@ export default function Table() {
             value={ selectControl.column }
             onChange={ handleSelectControl }
           >
-            <option value="population">population</option>
-            <option value="orbital_period">orbital_period</option>
-            <option value="diameter">diameter</option>
-            <option value="rotation_period">rotation_period</option>
-            <option value="surface_water">surface_water</option>
+            {filterColumn.map((column) => (
+              <option key={ column } value={ column }>{column}</option>
+            ))}
           </select>
         </label>
         <label htmlFor="comparison" className="form-label col-2">
@@ -116,6 +105,28 @@ export default function Table() {
           Filter
         </button>
       </div>
+      <ul className="list-group-flush">
+        <li className="list-group-item active" aria-current="true">
+          <b>Active Filters</b>
+        </li>
+        {filterByNumericValues.map((activeFilter) => (
+          <li key={ activeFilter.column } className="list-group-item my-2">
+            <div className="row align-items-center">
+              <div className="col-1" style={ { maxWidth: '50px' } }>
+                <button type="button" className="btn btn-sm btn-danger">
+                  <i className="fa-regular fa-trash-can" />
+                </button>
+              </div>
+              <div className="col-4">
+                {activeFilter.column}
+                {' '}
+                {activeFilter.comparison}
+                {' '}
+                {activeFilter.value}
+              </div>
+            </div>
+          </li>))}
+      </ul>
     </>
   );
 }

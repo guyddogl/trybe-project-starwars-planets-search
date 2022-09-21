@@ -28,7 +28,7 @@ export default function Table() {
       )}
 
       <table className="table table-sm table-hover caption-top">
-        <caption>StarWars Planets</caption>
+        {/* <caption>StarWars Planets</caption> */}
         <thead className="table-secondary">
           <tr>
             <th scope="col">Name</th>
