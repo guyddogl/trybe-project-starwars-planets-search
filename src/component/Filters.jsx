@@ -11,7 +11,22 @@ export default function Table() {
     setFilterColumn,
     filterByNumericValues,
     setFilterByNumericValues,
+    planetsList,
   } = useContext(AppContext);
+
+  const [selectOrderControl, setSelectOrderControl] = useState({
+    order: 'population',
+    radio: '',
+  });
+
+  const handleSelectOrderControl = ({ target }) => {
+    setSelectOrderControl((prevState) => ({
+      ...prevState,
+      [target.name]: target.value,
+    }));
+  };
+
+  const handleFilterByName = ({ target }) => setFilterByName(target.value);
 
   const [selectControl, setSelectControl] = useState({
     column: filterColumn[0],
@@ -19,9 +34,8 @@ export default function Table() {
     value: 0,
   });
 
-  const handleFilterByName = ({ target }) => setFilterByName(target.value);
-
   const handleSelectControl = ({ target }) => {
+    console.log('teste');
     setSelectControl((prevState) => ({
       ...prevState,
       [target.name]: target.value,
@@ -62,6 +76,28 @@ export default function Table() {
     handleFilterByNumericValues();
   };
 
+  const handleOrder = () => {
+    console.log('order');
+    if (selectOrderControl.order === 'population') {
+      const knownPopulation = planetsList
+        .filter((planet) => planet.population !== 'unknown');
+      // const unknownPopulation = planetsList
+      //   .filter((planet) => planet.population === 'unknown');
+      if (selectOrderControl.radio === 'ASC') {
+        const { order } = selectOrderControl;
+        console.log(knownPopulation.sort((a, b) => a[order] - b[order]));
+      } else {
+        console.log(knownPopulation.sort((a, b) => b[order] - a[order]));
+      }
+    }
+  };
+
+  const orderOptions = ['population', 'orbital_period',
+    'diameter', 'rotation_period', 'surface_water'];
+
+  const comparisonOptions = ['maior que', 'menor que', 'igual a'];
+
+  console.log(selectControl);
   return (
     <>
       <div className="input-group mb-3">
@@ -102,9 +138,7 @@ export default function Table() {
             value={ selectControl.comparison }
             onChange={ handleSelectControl }
           >
-            <option value="maior que">maior que</option>
-            <option value="menor que">menor que</option>
-            <option value="igual a">igual a</option>
+            {comparisonOptions.map((e) => <option key={ e } value={ e }>{e}</option>)}
           </select>
         </label>
         <label htmlFor="value" className="form-label col-1">
@@ -120,36 +154,75 @@ export default function Table() {
         </label>
         <button
           type="button"
-          className="col-1 btn btn-md btn-dark"
+          className="col-1 btn btn-md btn-dark me-4"
           onClick={ handleFilter }
           data-testid="button-filter"
         >
           Filter
+        </button>
+        <label htmlFor="order" className="form-label col-2">
+          <b>Order</b>
+          <select
+            name="order"
+            className="form-select"
+            value={ selectOrderControl.order }
+            onChange={ handleSelectOrderControl }
+            data-testid="column-sort"
+          >
+            {orderOptions.map((opt) => <option key={ opt } value={ opt }>{opt}</option>)}
+          </select>
+        </label>
+        <div className="col-2" style={ { maxWidth: '100px' } }>
+          <label className="form-check-label mx-2 mt-3" htmlFor="ASC">
+            ASC
+            <input
+              className="form-check-input ms-1"
+              type="radio"
+              name="radio"
+              value="ASC"
+              onChange={ handleSelectOrderControl }
+              data-testid="column-sort-input-asc"
+            />
+          </label>
+          <br />
+          <label className="form-check-label mx-2" htmlFor="DESC">
+            DESC
+            <input
+              className="form-check-input ms-1"
+              type="radio"
+              name="radio"
+              value="DESC"
+              onChange={ handleSelectOrderControl }
+              data-testid="column-sort-input-desc"
+            />
+          </label>
+        </div>
+        <button
+          type="button"
+          className="col-1 btn btn-md btn-dark me-4 border"
+          onClick={ handleOrder }
+          data-testid="column-sort-button"
+        >
+          Order
         </button>
       </div>
       <ul className="list-group-flush">
         <li className="list-group-item active" aria-current="true">
           {filterByNumericValues.length > 0 && <b>Active Filters</b>}
         </li>
-        {filterByNumericValues.map((activeFilter) => (
-          <li key={ activeFilter.column } className="list-group-item my-2">
+        {filterByNumericValues.map((e) => (
+          <li key={ e.column } className="list-group-item my-2">
             <div className="row align-items-center" data-testid="filter">
               <div className="col-1" style={ { maxWidth: '50px' } }>
                 <button
                   type="button"
                   className="btn btn-sm btn-danger"
-                  onClick={ () => removeFilter(activeFilter.column) }
+                  onClick={ () => removeFilter(e.column) }
                 >
                   <i className="fa-solid fa-xmark" />
                 </button>
               </div>
-              <div className="col-4">
-                {activeFilter.column}
-                {' '}
-                {activeFilter.comparison}
-                {' '}
-                {activeFilter.value}
-              </div>
+              <div className="col-4">{`${e.column} ${e.comparison} ${e.value}`}</div>
             </div>
           </li>))}
         <li className="list-group-item" aria-current="true">

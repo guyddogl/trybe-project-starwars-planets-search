@@ -15,6 +15,8 @@ export default function AppProvider({ children }) {
 
   const [filterButton, setFilterButton] = useState(false);
 
+  const [orderButton, setOrderButton] = useState(false);
+
   const INITIAL_FILTER_COLUMN = [
     'population',
     'orbital_period',
@@ -57,7 +59,6 @@ export default function AppProvider({ children }) {
   };
 
   useEffect(() => {
-    console.log(filterByNumericValues);
     let filterPlanet = planetsList;
     if (filterByNumericValues.length > 0) {
       filterByNumericValues.forEach((filter) => {
@@ -66,8 +67,6 @@ export default function AppProvider({ children }) {
           .filter((planet) => (
             verifyFilterComparison(planet, column, comparison, value)
           ));
-        console.log(planetsList, 'api');
-        console.log(filteredPlanetList, 'filtrado');
         filterPlanet = filteredPlanetList;
       });
     }
@@ -91,6 +90,8 @@ export default function AppProvider({ children }) {
     filterColumn,
     setFilterColumn,
     INITIAL_FILTER_COLUMN,
+    orderButton,
+    setOrderButton,
   };
 
   return (
