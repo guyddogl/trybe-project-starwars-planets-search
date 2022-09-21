@@ -14,7 +14,7 @@ export default function Table() {
   } = useContext(AppContext);
 
   const [selectControl, setSelectControl] = useState({
-    column: 'population',
+    column: filterColumn[0],
     comparison: 'maior que',
     value: 0,
   });
@@ -41,8 +41,13 @@ export default function Table() {
     .filter((column) => column !== selectControl.column));
 
   const handleFilter = () => {
-    handleFilterByNumericValues();
     updateColumnOptions();
+    handleFilterByNumericValues();
+    setSelectControl({
+      column: filterColumn[0],
+      comparison: 'maior que',
+      value: 0,
+    });
   };
 
   return (
@@ -112,7 +117,7 @@ export default function Table() {
       </div>
       <ul className="list-group-flush">
         <li className="list-group-item active" aria-current="true">
-          <b>Active Filters</b>
+          {filterByNumericValues.length > 0 && <b>Active Filters</b>}
         </li>
         {filterByNumericValues.map((activeFilter) => (
           <li key={ activeFilter.column } className="list-group-item my-2">
