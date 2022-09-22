@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 import App from '../App';
 import testData from './testData';
@@ -18,6 +18,11 @@ const BUTTON_FILTER = 'button-filter';
 // const INPUT_SORT_ASC = 'column-sort-input-asc';
 // const BUTTON_SORT = 'column-sort-button';
 
+async function waitForPageLoads(length = 11) {
+  await waitFor(() => {
+    expect(screen.getAllByRole('row')).toHaveLength(length);
+  });
+}
 describe('Testa o comportamento inicial do App', () => {
 
   test('Verifica se a api é chamada corretamente', async () => {
@@ -54,47 +59,30 @@ describe('Testa o comportamento inicial do App', () => {
     global.fetch = jest.fn(async () => ({ json: async () => testData }));
     render(<App />);
     const input = screen.getByTestId(INPUT_FILTER_NAME);
-    userEvent.type(input, 'Tat');
-    const planet = await screen.findByText(/Tatooine/i);
+    userEvent.type(input, 'aa');
+    const planet = await screen.findByText(/Alderaan/i);
     expect(planet).toBeInTheDocument();
   });
 
-  test('Verifica se o botão filter funciona', async () => {
-    global.fetch = jest.fn(async () => ({ json: async () => testData }));
-    render(<App />);
-    const value = screen.getByTestId(VALUE_FILTER);
-    userEvent.type(value, '1000');
-    const button = screen.getByTestId(BUTTON_FILTER);
-    userEvent.click(button);
-    const planet = await screen.findByText(/Yavin/i);
-    expect(planet).not.toBeInTheDocument();
-  });
-
-  test('Verifica se o select comparison funciona', async () => {
+  test('Verifica se o botão remover todos os filtros funciona', async () => {
     global.fetch = jest.fn(async () => ({ json: async () => testData }));
     render(<App />);
     const comparison = screen.getByTestId("comparison-filter");
     userEvent.selectOptions(comparison, "menor que");
-    const button = screen.getByTestId(BUTTON_FILTER);
-    userEvent.click(button);
-    expect(screen.getByText(/menor que/i).selected).toBe(true);
-  });
-
-  test('Verifica se o select order funciona', async () => {
-    global.fetch = jest.fn(async () => ({ json: async () => testData }));
-    render(<App />);
-    const order = screen.getByTestId("column-sort");
-    userEvent.selectOptions(order, "diameter");
-    expect(screen.getByText(/diameter/i).selected).toBe(true);
-  });
-
-  test('Verifica se o botão remover todos os filtros aparece na tela', async () => {
-    global.fetch = jest.fn(async () => ({ json: async () => testData }));
-    render(<App />);
-    const comparison = screen.getByTestId("comparison-filter");
-    userEvent.selectOptions(comparison, "menor que");
+    const buttonFilter = screen.getByTestId(BUTTON_FILTER);
+    userEvent.click(buttonFilter);
     const button = screen.getByTestId('button-remove-filters');
     userEvent.click(button);
   });
 
+  test('Verifica se o botão remover um filtro funciona', async () => {
+    global.fetch = jest.fn(async () => ({ json: async () => testData }));
+    render(<App />);
+    const comparison = screen.getByTestId("comparison-filter");
+    userEvent.selectOptions(comparison, "menor que");
+    const buttonFilter = screen.getByTestId(BUTTON_FILTER);
+    userEvent.click(buttonFilter);
+    const button = screen.getByTestId('remove-filter');
+    userEvent.click(button);
+  });
 });

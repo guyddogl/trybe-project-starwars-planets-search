@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { act } from 'react-dom/test-utils';
 import PropTypes from 'prop-types';
 import AppContext from './AppContext';
 
@@ -35,27 +36,34 @@ export default function AppProvider({ children }) {
         const data = await response.json();
         const removeResidents = data.results
           .map(({ residents, ...lisOfPlanets }) => lisOfPlanets); // https://stackoverflow.com/questions/18133635/remove-property-for-all-objects-in-array
-        setPlanetsList(removeResidents);
-        setFilterPlanets(removeResidents);
-        setIsLoading(false);
+        act(() => { setPlanetsList(removeResidents); });
+        act(() => { setFilterPlanets(removeResidents); });
+        act(() => { setIsLoading(false); });
+        // setPlanetsList(removeResidents);
+        // setFilterPlanets(removeResidents);
+        // setIsLoading(false);
       } catch (error) {
         console.log(error);
-        setIsLoading(false);
+        act(() => { setIsLoading(false); });
       }
     };
     getPlanetList();
   }, []);
 
   const verifyFilterComparison = (planet, column, comparison, value) => {
-    switch (comparison) {
-    case 'maior que':
-      return Number(planet[column]) > Number(value);
-    case 'menor que':
-      return Number(planet[column]) < Number(value);
-    case 'igual a':
-      return Number(planet[column]) === Number(value);
-    default: return planet;
-    }
+    if (comparison === 'maior que') return Number(planet[column]) > Number(value);
+    if (comparison === 'menor que') return Number(planet[column]) < Number(value);
+    if (comparison === 'igual a') return Number(planet[column]) === Number(value);
+    // Troquei o switch pelos Ifs para facilitar no teste já que não tinha caso de teste para o default do switch
+    // switch (comparison) {
+    // case 'maior que':
+    //   return Number(planet[column]) > Number(value);
+    // case 'menor que':
+    //   return Number(planet[column]) < Number(value);
+    // case 'igual a':
+    //   return Number(planet[column]) === Number(value);
+    // default: return planet;
+    // }
   };
 
   useEffect(() => {

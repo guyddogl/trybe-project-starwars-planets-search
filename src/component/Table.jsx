@@ -8,16 +8,16 @@ export default function Table() {
     filteredPlanetList,
   } = useContext(AppContext);
 
-  const formatDate = (param) => {
-    const date = new Date(param);
-    const year = date.getFullYear();
-    const setZero = 10;
-    const month = (date.getMonth() + 1) < setZero
-      ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
-    const day = date.getDate() < setZero
-      ? `0${date.getDate()}` : date.getDate();
-    return `${month}/${day}/${year}`;
-  };
+  // const formatDate = (param) => {
+  //   const date = new Date(param);
+  //   const year = date.getFullYear();
+  //   const setZero = 10;
+  //   const month = (date.getMonth() + 1) < setZero
+  //     ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+  //   const day = date.getDate() < setZero
+  //     ? `0${date.getDate()}` : date.getDate();
+  //   return `${month}/${day}/${year}`;
+  // };
 
   const tableHead = ['Name', ' Rotation Period', 'Orbital Period', 'Diameter',
     'Climate', 'Gravity', 'Terrain', 'Surface Water', 'Population', 'Films',
@@ -53,8 +53,8 @@ export default function Table() {
                 <td>{planet.surface_water}</td>
                 <td>{planet.population}</td>
                 <td>{planet.films.length}</td>
-                <td>{formatDate(planet.created)}</td>
-                <td>{formatDate(planet.edited)}</td>
+                {/* <td>{formatDate(planet.created)}</td>
+                <td>{formatDate(planet.edited)}</td> */}
                 <td><a href={ planet.url } target="_blank" rel="noreferrer">Link</a></td>
               </tr>))}
           </tbody>

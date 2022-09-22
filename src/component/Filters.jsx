@@ -27,10 +27,10 @@ export default function Table() {
   });
 
   const handleSelectControl = ({ target }) => {
-    setSelectControl((prevState) => ({
-      ...prevState,
+    setSelectControl({
+      ...selectControl,
       [target.name]: target.value,
-    }));
+    });
   };
 
   const handleFilterByNumericValues = () => {
@@ -216,6 +216,7 @@ export default function Table() {
                 <button
                   type="button"
                   className="btn btn-sm btn-danger"
+                  data-testid="remove-filter"
                   onClick={ () => removeFilter(e.column) }
                 >
                   <i className="fa-solid fa-xmark" />
