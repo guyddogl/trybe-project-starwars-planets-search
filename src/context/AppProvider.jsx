@@ -53,7 +53,7 @@ export default function AppProvider({ children }) {
   const verifyFilterComparison = (planet, column, comparison, value) => {
     if (comparison === 'maior que') return Number(planet[column]) > Number(value);
     if (comparison === 'menor que') return Number(planet[column]) < Number(value);
-    if (comparison === 'igual a') return Number(planet[column]) === Number(value);
+    return Number(planet[column]) === Number(value);
     // Troquei o switch pelos Ifs para facilitar no teste já que não tinha caso de teste para o default do switch
     // switch (comparison) {
     // case 'maior que':

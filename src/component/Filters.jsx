@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import AppContext from '../context/AppContext';
+import orderPlanetList from '../helpers';
 
 export default function Table() {
   const { filterByName, setFilterByName, setFilterButton, filterButton,
@@ -68,28 +69,9 @@ export default function Table() {
   };
 
   const handleOrder = () => {
-    if (selectOrderControl.order === 'population') {
-      const knownPopulation = planetsList
-        .filter((planet) => planet.population !== 'unknown');
-      const unknownPopulation = planetsList
-        .filter((planet) => planet.population === 'unknown');
-      const { order } = selectOrderControl;
-      if (selectOrderControl.radio === 'ASC') {
-        return setFilterPlanets([
-          ...knownPopulation.sort((a, b) => a[order] - b[order]),
-          ...unknownPopulation]);
-      }
-      return setFilterPlanets([
-        ...knownPopulation.sort((a, b) => b[order] - a[order]),
-        ...unknownPopulation]);
-    }
-    const { order } = selectOrderControl;
+    const { order, radio } = selectOrderControl;
     setFilterPlanets([]);
-    if (selectOrderControl.radio === 'ASC') {
-      setFilterPlanets([...planetsList.sort((a, b) => a[order] - b[order])]);
-    } else {
-      setFilterPlanets([...planetsList.sort((a, b) => b[order] - a[order])]);
-    }
+    orderPlanetList(order, radio, planetsList, setFilterPlanets);
   };
 
   const orderOptions = ['population', 'orbital_period',

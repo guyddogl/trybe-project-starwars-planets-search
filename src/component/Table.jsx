@@ -8,6 +8,14 @@ export default function Table() {
     filteredPlanetList,
   } = useContext(AppContext);
 
+  const formatDate = (param) => {
+    const date = new Date(param);
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const day = date.getDate();
+    return `${month}/${day}/${year}`;
+  };
+
   // const formatDate = (param) => {
   //   const date = new Date(param);
   //   const year = date.getFullYear();
@@ -53,8 +61,10 @@ export default function Table() {
                 <td>{planet.surface_water}</td>
                 <td>{planet.population}</td>
                 <td>{planet.films.length}</td>
-                {/* <td>{formatDate(planet.created)}</td>
-                <td>{formatDate(planet.edited)}</td> */}
+                {/* <td>{planet.created}</td>
+                <td>{planet.edited}</td> */}
+                <td>{formatDate(planet.created)}</td>
+                <td>{formatDate(planet.edited)}</td>
                 <td><a href={ planet.url } target="_blank" rel="noreferrer">Link</a></td>
               </tr>))}
           </tbody>

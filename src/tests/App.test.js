@@ -10,13 +10,6 @@ const COLUMN_FILTER = 'column-filter';
 const COMPARISON_FILTER = 'comparison-filter';
 const VALUE_FILTER = 'value-filter';
 const BUTTON_FILTER = 'button-filter';
-// const FILTER = 'filter';
-// const BUTTON_REMOVE_FILTERS = 'button-remove-filters';
-// const PLANET_NAME = 'planet-name';
-// const SELECT_COLUMN_SORT = 'column-sort';
-// const INPUT_SORT_DESC = 'column-sort-input-desc';
-// const INPUT_SORT_ASC = 'column-sort-input-asc';
-// const BUTTON_SORT = 'column-sort-button';
 
 async function waitForPageLoads(length = 11) {
   await waitFor(() => {

@@ -3,27 +3,17 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 import App from '../App';
 import testData from './testData';
+import orderPlanetList from "../helpers";
 
-
-const INPUT_FILTER_NAME = 'name-filter';
-const COLUMN_FILTER = 'column-filter';
-const COMPARISON_FILTER = 'comparison-filter';
 const VALUE_FILTER = 'value-filter';
 const BUTTON_FILTER = 'button-filter';
-// const FILTER = 'filter';
-// const BUTTON_REMOVE_FILTERS = 'button-remove-filters';
-// const PLANET_NAME = 'planet-name';
-// const SELECT_COLUMN_SORT = 'column-sort';
-// const INPUT_SORT_DESC = 'column-sort-input-desc';
-// const INPUT_SORT_ASC = 'column-sort-input-asc';
-// const BUTTON_SORT = 'column-sort-button';
 
 async function waitForPageLoads(length = 11) {
   await waitFor(() => {
     expect(screen.getAllByRole('row')).toHaveLength(length);
   });
 }
-describe('Testa o comportamento inicial do App', () => {
+describe('Testa os filtros do App', () => {
 
   test('Verifica se o botão filter funciona', async () => {
     global.fetch = jest.fn(async () => ({ json: async () => testData }));
@@ -41,7 +31,7 @@ describe('Testa o comportamento inicial do App', () => {
     // expect(planet).not.toBeInTheDocument();
   });
 
-  test('Verifica se o select comparison funciona', async () => {
+  test('Verifica se o select comparison(menor que) funciona', async () => {
     global.fetch = jest.fn(async () => ({ json: async () => testData }));
     render(<App />);
 
@@ -54,7 +44,7 @@ describe('Testa o comportamento inicial do App', () => {
     // expect(screen.getByText(/menor que/i).selected).toBe(true);
   });
 
-  test('Verifica se o select comparison funciona', async () => {
+  test('Verifica se o select comparison(maior que) funciona', async () => {
     global.fetch = jest.fn(async () => ({ json: async () => testData }));
     render(<App />);
 
@@ -67,7 +57,7 @@ describe('Testa o comportamento inicial do App', () => {
     // expect(screen.getByText(/maior que/i).selected).toBe(true);
   });
 
-  test('Verifica se o select comparison funciona', async () => {
+  test('Verifica se o select comparison(igual a) funciona', async () => {
     global.fetch = jest.fn(async () => ({ json: async () => testData }));
     render(<App />);
 
@@ -86,8 +76,44 @@ describe('Testa o comportamento inicial do App', () => {
 
     await waitForPageLoads();
 
-    const order = screen.getByTestId("column-sort");
-    userEvent.selectOptions(order, "diameter");
+    const button = screen.getByTestId('column-sort-button');
+    userEvent.click(button);
     // expect(screen.getByText(/diameter/i).selected).toBe(true);
+  });
+  test('Verifica se o select order funciona', async () => {
+    global.fetch = jest.fn(async () => ({ json: async () => testData }));
+    render(<App />);
+
+    await waitForPageLoads();
+
+    const input = screen.getByTestId('column-sort-input-asc')
+    userEvent.click(input);
+    const button = screen.getByTestId('column-sort-button');
+    userEvent.click(button);
+    // expect(screen.getByText(/diameter/i).selected).toBe(true);
+  });
+
+  test('Verifica se o select order funciona', async () => {
+    global.fetch = jest.fn(async () => ({ json: async () => testData }));
+    render(<App />);
+
+    await waitForPageLoads();
+    const order = screen.getByTestId("column-sort");
+    screen.debug();
+    userEvent.selectOptions(order, ["diameter"], { bubbles: true });
+    // expect(screen.getByText(/diameter/i).selected).toBe(true);
+    const input = screen.getByTestId('column-sort-input-asc');
+    userEvent.click(input);
+    const button = screen.getByTestId('column-sort-button');
+    userEvent.click(button);
+    // expect(button).toBeInTheDocument();
+  });
+
+  test('Verifica se os planetas são ordenados', () => {
+    const array = ['star', 'wars', 'planets'];
+    orderPlanetList('population', 'ASC', array, jest.fn());
+    orderPlanetList('population', 'DESC', array, jest.fn());
+    orderPlanetList('diameter', 'ASC', array, jest.fn());
+    orderPlanetList('diameter', 'DESC', array, jest.fn());
   });
 });
